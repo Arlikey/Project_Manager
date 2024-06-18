@@ -1,0 +1,44 @@
+﻿<Window x:Class="Project_Manager.Views.AddTaskForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Project_Manager.Views"
+        xmlns:models="clr-namespace:Project_Manager.Models"
+        mc:Ignorable="d"
+            Title="AddTaskForm" Height="500" Width="300">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="Priorities" MethodName="GetValues" ObjectType="{x:Type models:Priority}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="models:Priority" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+    <Grid Background="Black">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" VerticalAlignment="Center">
+            <Label Foreground="White" FontSize="15">Название задачи :</Label>
+            <TextBox Name="nameTextBox" Margin="10, 0, 10, 0" FontSize="15" Text="{Binding Name, Mode=OneWay}"></TextBox>
+        </StackPanel>
+        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+            <Label Foreground="White" FontSize="15">Описание задачи :</Label>
+            <TextBox Name="descriptionTextBox" Margin="10, 0, 10, 0" FontSize="15" Height="100" Text="{Binding Description, Mode=OneWay}"></TextBox>
+        </StackPanel>
+        <StackPanel Grid.Row="2" VerticalAlignment="Center">
+            <Label Foreground="White" FontSize="15">Приоритет задачи :</Label>
+            <ComboBox Margin="10, 0, 10, 0" SelectedItem="{Binding SelectedPriority}" ItemsSource="{Binding Source={StaticResource Priorities}}"></ComboBox>
+        </StackPanel>
+        <StackPanel Grid.Row="3" VerticalAlignment="Center">
+            <Label Foreground="White" FontSize="15">Статус задачи :</Label>
+            <CheckBox Name="statusCheckBox" Margin="10, 0, 10, 0" IsChecked="{Binding IsCompleted}"></CheckBox>
+        </StackPanel>
+        <Button Name="saveButton" Grid.Row="4" Margin="60, 20, 60, 20" FontSize="20" FontWeight="Bold" 
+            Background="Black" Foreground="White" BorderBrush="White" Click="SaveButton_Click">Принять</Button>
+    </Grid>
+</Window>
