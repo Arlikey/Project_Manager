@@ -32,11 +32,11 @@
         </StackPanel>
         <StackPanel Grid.Row="2" VerticalAlignment="Center">
             <Label Foreground="White" FontSize="15">Приоритет задачи :</Label>
-            <ComboBox Margin="10, 0, 10, 0" SelectedItem="{Binding SelectedPriority}" ItemsSource="{Binding Source={StaticResource Priorities}}"></ComboBox>
+            <ComboBox Name="priorityComboBox" Margin="10, 0, 10, 0" ItemsSource="{Binding Source={StaticResource Priorities}}"></ComboBox>
         </StackPanel>
         <StackPanel Grid.Row="3" VerticalAlignment="Center">
             <Label Foreground="White" FontSize="15">Статус задачи :</Label>
-            <CheckBox Name="statusCheckBox" Margin="10, 0, 10, 0" IsChecked="{Binding IsCompleted}"></CheckBox>
+            <CheckBox Name="statusCheckBox" Margin="10, 0, 10, 0" IsChecked="{Binding IsCompleted, Mode=OneWay}"></CheckBox>
         </StackPanel>
         <Button Name="saveButton" Grid.Row="4" Margin="60, 20, 60, 20" FontSize="20" FontWeight="Bold" 
             Background="Black" Foreground="White" BorderBrush="White" Click="SaveButton_Click">Принять</Button>

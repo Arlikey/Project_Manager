@@ -4,9 +4,11 @@ using Project_Manager.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Project_Manager.ViewModels
@@ -14,6 +16,9 @@ namespace Project_Manager.ViewModels
     public class ManagementViewModel : ViewModelBase
     {
         private ObservableCollection<Project> _projects;
+        private ICollectionView projectsView;
+        private int itemsPerPage = 5;
+        private int currentPage;
         private Project selectedProject;
         private Models.Task selectedTask;
 
@@ -46,7 +51,40 @@ namespace Project_Manager.ViewModels
                 OnPropertyChanged();
             }
         }
+        public ICollectionView ProjectsView
+        {
+            get => projectsView;
+            set
+            {
+                projectsView = value;
+                OnPropertyChanged();
+            }
+        }
 
+        public int CurrentPage
+        {
+            get => currentPage;
+            set
+            {
+                currentPage = value;
+                OnPropertyChanged();
+                ProjectsView.Refresh();
+            }
+        }
+
+        public int ItemsPerPage
+        {
+            get => itemsPerPage;
+            set
+            {
+                itemsPerPage = value;
+                OnPropertyChanged();
+                ProjectsView.Refresh();
+            }
+        }
+
+        public ICommand NextPageCommand { get; }
+        public ICommand PreviousPageCommand { get; }
         public ICommand AddProjectCommand { get; }
         public ICommand EditProjectCommand { get; }
         public ICommand DeleteProjectCommand { get; }
@@ -57,12 +95,19 @@ namespace Project_Manager.ViewModels
         public ManagementViewModel()
         {
             Projects = new ObservableCollection<Project>();
+            ProjectsView = CollectionViewSource.GetDefaultView(Projects);
+            ProjectsView.Filter = ProjectsFilter;
+
+            NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
+            PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
             AddProjectCommand = new RelayCommand(AddProject);
             EditProjectCommand = new RelayCommand(EditProject, CanEditOrDeleteProject);
             DeleteProjectCommand = new RelayCommand(DeleteProject, CanEditOrDeleteProject);
             AddTaskCommand = new RelayCommand(AddTask);
             EditTaskCommand = new RelayCommand(EditTask, CanEditOrDeleteTask);
             DeleteTaskCommand = new RelayCommand(DeleteTask, CanEditOrDeleteTask);
+
+            CurrentPage = 1;
         }
 
         private void AddProject()
@@ -130,6 +175,41 @@ namespace Project_Manager.ViewModels
         private bool CanEditOrDeleteTask()
         {
             return SelectedProject != null && SelectedTask != null;
+        }
+        private bool ProjectsFilter(object obj)
+        {
+            if (obj is Project project)
+            {
+                int index = Projects.IndexOf(project);
+                return index >= (CurrentPage - 1) * ItemsPerPage && index < CurrentPage * ItemsPerPage;
+            }
+            return false;
+        }
+
+        private void NextPage()
+        {
+            if (CanGoToNextPage())
+            {
+                CurrentPage++;
+            }
+        }
+
+        private bool CanGoToNextPage()
+        {
+            return (CurrentPage * ItemsPerPage) < Projects.Count;
+        }
+
+        private void PreviousPage()
+        {
+            if (CanGoToPreviousPage())
+            {
+                CurrentPage--;
+            }
+        }
+
+        private bool CanGoToPreviousPage()
+        {
+            return CurrentPage > 1;
         }
     }
 }

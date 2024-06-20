@@ -31,7 +31,19 @@
                 <RowDefinition Height="3*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <ListBox ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Name"></ListBox>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="0.2*"/>
+                </Grid.RowDefinitions>
+                <ListBox ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Name" FontSize="30"></ListBox>
+                <DockPanel Grid.Row="1" LastChildFill="False">
+                    <Button DockPanel.Dock="Left" Width="100" Margin="10, 10, 0, 10" FontSize="30" Content="&lt;"
+                            Command="{Binding PreviousPageCommand}"></Button>
+                    <Button DockPanel.Dock="Right" Margin="0, 10, 10, 10" Width="100" FontSize="30" Content="&gt;"
+                            Command="{Binding NextPageCommand}"></Button>
+                </DockPanel>
+            </Grid>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>

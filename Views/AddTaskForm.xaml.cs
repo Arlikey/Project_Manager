@@ -1,8 +1,11 @@
 ﻿using Project_Manager.Models;
+using Project_Manager.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,14 +22,18 @@ namespace Project_Manager.Views
     /// <summary>
     /// Interaction logic for AddTaskForm.xaml
     /// </summary>
-    public partial class AddTaskForm : Window
+    public partial class AddTaskForm : Window, INotifyPropertyChanged
     {
         private Models.Task task;
+        private Priority _selectedPriority;
         public event Action<Models.Task> AddTask;
 
         public AddTaskForm()
         {
             InitializeComponent();
+            Binding binding = new Binding("SelectedPriority");
+            priorityComboBox.SetBinding(ComboBox.SelectedItemProperty, binding);
+            
             DataContext = this;
 
         }
@@ -34,9 +41,23 @@ namespace Project_Manager.Views
         {
             InitializeComponent();
             this.task = task;
+            Binding binding = new Binding("Priority");
+            binding.Mode = BindingMode.OneWay;
+            priorityComboBox.SetBinding(ComboBox.SelectedItemProperty, binding);
             DataContext = task;
         }
-        public Priority SelectedPriority { get; set; }
+        public Priority SelectedPriority 
+        { 
+            get => _selectedPriority;
+            set
+            {
+                if (_selectedPriority != value)
+                {
+                    _selectedPriority = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
@@ -56,10 +77,15 @@ namespace Project_Manager.Views
             {
                 task.Name = nameTextBox.Text;
                 task.Description = descriptionTextBox.Text;
-                task.Priority = SelectedPriority;
+                task.Priority = (Priority)priorityComboBox.SelectedItem;
                 task.IsCompleted = (bool)statusCheckBox.IsChecked;
             }
             Close();
+        }
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }
